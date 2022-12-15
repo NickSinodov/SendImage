@@ -5,70 +5,33 @@ Client::Client(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::Client)
 {
-    ui->setupUi(this);
-	m_model = new QFileSystemModel;
-	m_model->setRootPath("");
-	ui->treeView->setModel(m_model);
+	ui->setupUi(this);
 	m_socket = new QTcpSocket(this);
+	connect(ui->openFile, &QPushButton::clicked, this, &Client::openFile);
+	connect(ui->sendImage, &QPushButton::clicked, this, &Client::sendImage);
 	connect(m_socket, &QTcpSocket::disconnected, m_socket, &QTcpSocket::deleteLater);
 }
 
 
-
-
-void Client::on_pushButton_clicked()
-{
-	sendImage();
-}
-
 void Client::sendImage()
 {
-	QFileInfo fileName = m_model->fileInfo(ui->treeView->currentIndex());
-	if (fileName.isDir())
+
+	cout << m_fileName.toStdString() << endl;
+	if(!m_fileName.isEmpty())
 	{
-		cout << "Choose not directory!" << endl;
-	}
-	else
-	{
-		if(checkFormatImage(fileName))
-		{
-			sendToServer(fileName.absoluteFilePath());
-		}
-		else
-		{
-			cout << "Not image!" << endl;
-		}
+		sendToServer(m_fileName);
 	}
 }
 
-bool Client::checkFormatImage(const QFileInfo &fileInfo)
+void Client::openFile()
 {
-	bool image = true;
-	if(fileInfo.suffix() == "png")
-	{
-		return image;
-	}
-	else if(fileInfo.suffix() == "jpg")
-	{
-		return image;
-	}
-	else if(fileInfo.suffix() == "jpeg")
-	{
-		return image;
-	}
-	else if(fileInfo.suffix() == "gif")
-	{
-		return image;
-	}
-	else if(fileInfo.suffix() == "svg")
-	{
-		return image;
-	}
-	else
-	{
-		image = false;
-		return image;
-	}
+	m_fileName = QFileDialog::getOpenFileName(
+	this,
+	tr("Open"),
+	QDir::currentPath(),
+	tr("Document files (*.jpg *.png *.gif *.pdf *.svg)")
+	);
+	ui->lineEdit->setText(m_fileName);
 }
 
 void Client::sendToServer(const QString &str)
@@ -85,3 +48,9 @@ Client::~Client()
 {
 	delete ui;
 }
+
+
+
+
+
+

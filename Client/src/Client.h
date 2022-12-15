@@ -6,7 +6,9 @@
 #include <QFileSystemModel>
 #include <QTreeView>
 #include <QTcpSocket>
+#include <QFileDialog>
 #include <iostream>
+
 using namespace std;
 QT_BEGIN_NAMESPACE
 namespace Ui { class Client; }
@@ -18,10 +20,13 @@ class Client : public QMainWindow
 
 public:
     Client(QWidget *parent = nullptr);
-    ~Client();
+	~Client();
 
 private slots:
-	void on_pushButton_clicked();
+//	void on_pushButton_clicked();
+	void sendImage();
+	void openFile();
+
 
 private:
     Ui::Client *ui;
@@ -30,8 +35,8 @@ private:
 	QTreeView			*m_tree;
 	QTcpSocket			*m_socket;
 	QByteArray			 m_data;
+	QString				 m_fileName;
 	void sendToServer(const QString &str);
-	void sendImage();
-	bool checkFormatImage(const QFileInfo &fileInfo);
+//	bool checkFormatImage(const QFileInfo &fileInfo);
 };
 #endif // CLIENT_H
